@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Student Learning Dashboard",
-  description: "Interactive learning dashboard built with Next.js, Supabase, Tailwind CSS and Framer Motion.",
+  description:
+    "A futuristic learning dashboard built with Next.js, Supabase, Tailwind CSS, and Framer Motion.",
 };
 
 export default function RootLayout({
@@ -25,9 +26,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full bg-[#0a0a0f] text-slate-200 antialiased">
+        {children}
+      </body>
     </html>
   );
 }
