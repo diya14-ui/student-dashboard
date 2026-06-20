@@ -8,22 +8,43 @@ const DAYS = 7;
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
-// Generate realistic-looking activity data for 52 weeks
+// ---------------------------------------------------------------------------
+// Deterministic seeded PRNG (LCG) — same output on server AND client.
+// Using Math.random() here caused a hydration mismatch because SSR and the
+// client generated different random numbers, producing different totalSessions.
+// ---------------------------------------------------------------------------
+function seededRandom(seed: number) {
+  // Mulberry32 — fast, high-quality 32-bit PRNG
+  let s = seed >>> 0;
+  return () => {
+    s += 0x6d2b79f5;
+    let t = Math.imul(s ^ (s >>> 15), 1 | s);
+    t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// Generate realistic-looking activity data for 52 weeks.
+// Seed is fixed so SSR ≡ client output.
 function generateActivity(): number[] {
+  const rand = seededRandom(0xdeadbeef);
   const total = WEEKS * DAYS;
   return Array.from({ length: total }, (_, i) => {
-    // Make recent weeks (last 16 weeks) more active
     const weekIndex = Math.floor(i / DAYS);
     const isRecent = weekIndex >= WEEKS - 16;
     const base = isRecent ? 0.55 : 0.25;
-    const rand = Math.random();
-    if (rand < base * 0.3) return 0;
-    if (rand < base * 0.55) return 1;
-    if (rand < base * 0.75) return 2;
-    if (rand < base * 0.9) return 3;
+    const r = rand();
+    if (r < base * 0.3) return 0;
+    if (r < base * 0.55) return 1;
+    if (r < base * 0.75) return 2;
+    if (r < base * 0.9) return 3;
     return 4;
   });
 }
+
+// Pin the reference date to a fixed ISO string so month labels are identical
+// between SSR and client (avoids timezone / timing skew).
+const REFERENCE_DATE = "2026-06-20";
 
 // LeetCode / GitHub-style green intensity
 const intensityClass: Record<number, string> = {
