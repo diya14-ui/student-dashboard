@@ -4,6 +4,10 @@ import { motion } from "framer-motion";
 import HeroTile from "./Herotile";
 import ActivityTile from "./Activitytile";
 import CourseCard from "./Coursecard";
+import WeeklyHoursChart from "./WeeklyHoursChart";
+import SkillRadarTile from "./SkillRadarTile";
+import GoalsTile from "./GoalsTile";
+import SubjectLearningPath from "./SubjectLearningPath";
 import type { Course } from "@/types/courses";
 import { containerVariants, itemVariants } from "@/lib/animations";
 
@@ -26,20 +30,29 @@ export default function BentoDashboard({
       className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4"
       aria-label="Student dashboard"
     >
-      <motion.div
-        variants={itemVariants}
-        className="md:col-span-2 lg:col-span-2"
-      >
+      {/* Row 1: Hero + Activity Heatmap */}
+      <motion.div variants={itemVariants} className="md:col-span-2 lg:col-span-2">
         <HeroTile studentName={studentName} streak={streak} />
       </motion.div>
 
-      <motion.div
-        variants={itemVariants}
-        className="md:col-span-2 lg:col-span-2"
-      >
+      <motion.div variants={itemVariants} className="md:col-span-2 lg:col-span-2">
         <ActivityTile />
       </motion.div>
 
+      {/* Row 2: Weekly Hours + Skill Proficiency + Goals */}
+      <motion.div variants={itemVariants} className="md:col-span-1 lg:col-span-1">
+        <WeeklyHoursChart />
+      </motion.div>
+
+      <motion.div variants={itemVariants} className="md:col-span-1 lg:col-span-2">
+        <SkillRadarTile />
+      </motion.div>
+
+      <motion.div variants={itemVariants} className="md:col-span-2 lg:col-span-1">
+        <GoalsTile />
+      </motion.div>
+
+      {/* Row 3: Active Courses header */}
       <motion.header
         variants={itemVariants}
         className="md:col-span-2 lg:col-span-4"
@@ -50,6 +63,7 @@ export default function BentoDashboard({
         </p>
       </motion.header>
 
+      {/* Row 4: Course cards */}
       {courses.map((course) => (
         <motion.div
           key={course.id}
@@ -63,6 +77,11 @@ export default function BentoDashboard({
           />
         </motion.div>
       ))}
+
+      {/* Row 5: Subject Learning Paths (full width) */}
+      <motion.div variants={itemVariants} className="md:col-span-2 lg:col-span-4">
+        <SubjectLearningPath />
+      </motion.div>
     </motion.section>
   );
 }
